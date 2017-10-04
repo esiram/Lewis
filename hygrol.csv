@@ -1,0 +1,4 @@
+ID,Type,Test Date,Date Built,Expected Value,Measured Value
+1,hygrometer,2017-08-02,2017-07-25,75.1,75.1
+2,hygrometer,2017-08-04,2017-07-22,12.4,12
+3,hygrometer,2017-08-01,2017-07-28,75.1,90 
