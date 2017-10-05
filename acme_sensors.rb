@@ -1,3 +1,7 @@
+#!/usr/bin/ruby
+# Program name: acme_sensors.rb
+
+require "optparse"
 require "csv"
 
 def sensor_grade_inventory(csv)
@@ -29,13 +33,13 @@ def sensor_grade_inventory(csv)
         hygro_pro = hygro_pro + 1
       elsif m.hygrometer_grade(self) == "prosumer-grade"
         hygro_prosumer = hygro_prosumer + 1
-      else
+      elseReturns
         hygro_discount = hygro_discount + 1
       end
     end
   end
 
-  # Returns graded inventory results with messages for humans
+  # Prints graded inventory results with messages for humans
   total_thermometers = thermo_pro + thermo_prosumer + thermo_discount
   if total_thermometers == 0
     message_therm = "No Thermometers\n"
@@ -48,9 +52,10 @@ def sensor_grade_inventory(csv)
   else
     message_hygro = "Hygrometers:\n" + "  " + hygro_pro.to_s + " Pro\n" + "  " + hygro_prosumer.to_s + " Prosumer\n" + "  " + hygro_discount.to_s + " Discount"
   end
-  return doc_name + message_therm + " " + message_hygro
+  puts doc_name + message_therm + " " + message_hygro
 
 end
+
 
 class Meter
 
@@ -108,4 +113,43 @@ class Meter
     return result
   end
 
+end
+
+
+# Options parser for accessing csv files on command line
+options = {}
+
+OptionParser.new do |opts|
+  opts.on("-d", "--directory [PATH]", "Path to CSV file directory") do |path|
+    options[:csvDirectoryPath] = path
+  end
+end.parse!
+
+csv_directory = options[:csvDirectoryPath]
+valid_directory = csv_directory && File.exist?(csv_directory) && File.readable?(csv_directory) && File.directory?(csv_directory)
+
+if valid_directory
+  Dir.foreach(csv_directory) do |file|
+    if File.extname(file) == ".csv"
+      sensor_grade_inventory(File.realdirpath(file, csv_directory))
+    end
+  end
+else
+  if !csv_directory
+    puts "Please supply CSV directory name."
+  else
+    if !File.exists?(csv_directory)
+      puts "This directory does not exist."
+    else
+      if !File.readable?(csv_directory)
+        puts "This directory is not readable."
+      else
+        if !File.directory?(csv_directory)
+          puts "The path is not a directory."
+        else
+          puts "Unknown error."
+        end
+      end
+    end
+  end
 end
