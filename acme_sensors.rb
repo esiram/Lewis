@@ -7,7 +7,7 @@ require "csv"
 def sensor_grade_inventory(csv)
   # Quantifies inventory by sensor grade and type
 
-  doc_name = "= " + csv.to_s + "\n"
+  doc_name = "= " + @file_name + "\n"
 
   thermo_pro = 0
   thermo_prosumer = 0
@@ -33,7 +33,7 @@ def sensor_grade_inventory(csv)
         hygro_pro = hygro_pro + 1
       elsif m.hygrometer_grade(self) == "prosumer-grade"
         hygro_prosumer = hygro_prosumer + 1
-      elseReturns
+      else
         hygro_discount = hygro_discount + 1
       end
     end
@@ -50,9 +50,9 @@ def sensor_grade_inventory(csv)
   if total_hygrometers == 0
     message_hygro = "No Hygrometers\n"
   else
-    message_hygro = "Hygrometers:\n" + "  " + hygro_pro.to_s + " Pro\n" + "  " + hygro_prosumer.to_s + " Prosumer\n" + "  " + hygro_discount.to_s + " Discount"
+    message_hygro = "Hygrometers:\n" + "  " + hygro_pro.to_s + " Pro\n" + "  " + hygro_prosumer.to_s + " Prosumer\n" + "  " + hygro_discount.to_s + " Discount\n"
   end
-  puts doc_name + message_therm + " " + message_hygro
+  puts doc_name + message_therm + message_hygro
 
 end
 
@@ -131,6 +131,7 @@ valid_directory = csv_directory && File.exist?(csv_directory) && File.readable?(
 if valid_directory
   Dir.foreach(csv_directory) do |file|
     if File.extname(file) == ".csv"
+      @file_name = file.to_s
       sensor_grade_inventory(File.realdirpath(file, csv_directory))
     end
   end
